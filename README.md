@@ -11,7 +11,7 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/denstrelnikov/Battery-Info/releases/latest">
+  <a href="https://github.com/strdns/Battery-Info/releases/latest">
     <img src="https://img.shields.io/badge/Download-macOS-111111?style=for-the-badge&logo=apple&logoColor=white" alt="Download for macOS">
   </a>
 </p>
