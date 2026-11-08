@@ -105,10 +105,11 @@ enum BatteryReader {
         let maximumMah = nominalMah ?? fullChargeMah ?? (legacyMah ? topMax : nil)
         let resolvedDesign = designMah ?? (legacyMah ? topMax : nil)
 
-        let healthPercent: Int? = {
+        let calculatedHealth: Int? = {
             guard let maximumMah, let resolvedDesign, resolvedDesign > 0 else { return nil }
             return min(100, Int((Double(maximumMah) / Double(resolvedDesign) * 100).rounded()))
         }()
+        let healthPercent = reportedCapacityPercent() ?? calculatedHealth
 
         let pluggedIn = isPluggedIn(source: source, registry: registry)
         let charging = bool(source?["Is Charging"]) || bool(registry["IsCharging"])
@@ -233,6 +234,60 @@ enum BatteryReader {
             }
         }
         return smc.batteryTemperature()
+    }
+
+    /// Same figure as System Information → Power → Maximum Capacity.
+    private static var reportedCapacity: (percent: Int, fetched: Date)?
+
+    private static func reportedCapacityPercent() -> Int? {
+        if let reportedCapacity, Date().timeIntervalSince(reportedCapacity.fetched) < 60 {
+            return reportedCapacity.percent
+        }
+        guard let percent = readReportedCapacity() else { return reportedCapacity?.percent }
+        reportedCapacity = (percent, Date())
+        return percent
+    }
+
+    private static func readReportedCapacity() -> Int? {
+        let process = Process()
+        process.executableURL = URL(fileURLWithPath: "/usr/sbin/system_profiler")
+        process.arguments = ["SPPowerDataType", "-json"]
+        let output = Pipe()
+        process.standardOutput = output
+        process.standardError = Pipe()
+        do {
+            try process.run()
+        } catch {
+            return nil
+        }
+        process.waitUntilExit()
+        guard process.terminationStatus == 0 else { return nil }
+        let data = output.fileHandleForReading.readDataToEndOfFile()
+        guard
+            let root = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
+            let sections = root["SPPowerDataType"] as? [[String: Any]]
+        else { return nil }
+        for section in sections {
+            guard let health = section["sppower_battery_health_info"] as? [String: Any] else { continue }
+            if let percent = leadingPercent(health["sppower_battery_health_maximum_capacity"]) {
+                return percent
+            }
+        }
+        return nil
+    }
+
+    private static func leadingPercent(_ value: Any?) -> Int? {
+        let text: String
+        if let value = value as? String {
+            text = value
+        } else if let value = value as? NSNumber {
+            text = value.stringValue
+        } else {
+            return nil
+        }
+        let digits = text.drop(while: { !$0.isNumber }).prefix(while: \.isNumber)
+        guard let percent = Int(digits), (0...100).contains(percent) else { return nil }
+        return percent
     }
 
     private static func integer(_ value: Any?) -> Int? {
