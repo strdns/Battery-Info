@@ -146,7 +146,8 @@ final class StatusBarController: NSObject, NSPopoverDelegate {
         let appearance = button.effectiveAppearance.name.rawValue
         let color = tint.usingColorSpace(.sRGB) ?? tint
         let channels = "\(Int((color.redComponent * 255).rounded())),\(Int((color.greenComponent * 255).rounded())),\(Int((color.blueComponent * 255).rounded()))"
-        let nextSignature = "\(icon?.size.width ?? 0)|\(title.string)|\(monitor.snapshot.percentage)|\(monitor.snapshot.powerState)|\(monitor.snapshot.lowPowerMode)|\(appearance)|\(channels)"
+        let tray = preferences.order.map { "\($0.rawValue)=\(preferences.isEnabled($0) ? 1 : 0)" }.joined(separator: ",")
+        let nextSignature = "\(icon?.size.width ?? 0)|\(title.string)|\(monitor.snapshot.percentage)|\(monitor.snapshot.powerState)|\(monitor.snapshot.lowPowerMode)|\(appearance)|\(channels)|\(tray)"
         button.toolTip = MenuBarRenderer.tooltip(for: monitor.snapshot)
         button.setAccessibilityLabel("Battery Info")
         button.setAccessibilityValue(MenuBarRenderer.accessibilityValue(for: monitor.snapshot))
