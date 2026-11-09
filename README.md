@@ -78,7 +78,7 @@ Right-click the menu-bar icon for Open, Customize, and Quit. Quitting puts the s
 
 ## Install
 
-[Download the latest release](https://github.com/denstrelnikov/Battery-Info/releases/latest), open `Battery.Info.dmg`, and drag **Battery Info** onto the Applications folder. Open the app from Applications. It has no Dock icon: it appears in the menu bar.
+[Download the latest release](https://github.com/strdns/Battery-Info/releases/latest), open `Battery.Info.dmg`, and drag **Battery Info** onto the Applications folder. Open the app from Applications. It has no Dock icon: it appears in the menu bar.
 
 ### First launch
 
