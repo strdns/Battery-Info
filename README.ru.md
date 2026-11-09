@@ -78,7 +78,7 @@ Battery Info стоит в строке меню на месте системн�
 
 ## Установка
 
-[Скачайте последний релиз](https://github.com/denstrelnikov/Battery-Info/releases/latest), откройте `Battery.Info.dmg` и перетащите **Battery Info** в папку «Программы». Затем откройте приложение оттуда. Значка в Dock нет: оно появляется в строке меню.
+[Скачайте последний релиз](https://github.com/strdns/Battery-Info/releases/latest), откройте `Battery.Info.dmg` и перетащите **Battery Info** в папку «Программы». Затем откройте приложение оттуда. Значка в Dock нет: оно появляется в строке меню.
 
 ### Первый запуск
 
